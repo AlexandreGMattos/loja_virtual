@@ -2,6 +2,7 @@ package br.com.lojavirtual.model;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -26,6 +27,7 @@ public class AvaliacaoProduto implements Serializable{
 	
 	private String descricao;
 	
+	@Column(nullable=false)
 	private Integer nota;
 	
 	@ManyToOne(targetEntity = Pessoa.class)
