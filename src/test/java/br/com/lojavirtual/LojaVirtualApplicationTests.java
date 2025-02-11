@@ -8,10 +8,11 @@ import org.springframework.test.context.ActiveProfiles;
 import br.com.lojavirtual.model.Acesso;
 import br.com.lojavirtual.repository.AcessoRepository;
 import br.com.lojavirtual.service.AcessoService;
+import junit.framework.TestCase;
 
 @SpringBootTest(classes = LojaVirtualApplication.class)
 @ActiveProfiles("test")
-public class LojaVirtualApplicationTests {
+public class LojaVirtualApplicationTests extends TestCase{
 
 	@Autowired
 	private AcessoService acessoSevice; 
@@ -23,7 +24,7 @@ public class LojaVirtualApplicationTests {
 	public void testeCadastraAcesso() {
 		Acesso acesso = new Acesso();
 		
-		acesso.setDescricao("ROLE_ADMIN2");
+		acesso.setDescricao("ROLE_TESTE");
 		
 		acessoRepository.save(acesso);
 	}
