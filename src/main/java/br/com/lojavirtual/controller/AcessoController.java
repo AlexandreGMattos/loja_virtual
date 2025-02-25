@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+
+
 import br.com.lojavirtual.model.Acesso;
 import br.com.lojavirtual.repository.AcessoRepository;
 import br.com.lojavirtual.service.AcessoService;
@@ -23,8 +25,8 @@ public class AcessoController {
 	@Autowired
 	private AcessoRepository acessoRepository;
 	
-	@ResponseBody /*pode dar um retorno da API*/
-	@PostMapping(value = "**/salvarAcesso") /*mapeando a url para receber um JSON*/
+	@ResponseBody /*Poder dar um retorno da API*/
+	@PostMapping(value = "**/salvarAcesso") /*Mapeando a url para receber JSON*/
 	public ResponseEntity<Acesso> salvarAcesso(@RequestBody Acesso acesso) { /*@RequestBody recebe o JSON e converte para objeto, se nao colocar fica tudo nulo*/
 		
 		Acesso acessoSalvo = acessoService.save(acesso);
