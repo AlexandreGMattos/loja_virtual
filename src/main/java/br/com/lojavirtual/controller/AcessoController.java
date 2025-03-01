@@ -38,7 +38,7 @@ public class AcessoController {
 	@PostMapping(value = "**/deleteAcesso") 
 	public ResponseEntity<?> deleteAcesso(@RequestBody Acesso acesso) { 
 		
-		acessoRepository.delete(acesso);
+		acessoRepository.deleteById(acesso.getId());
 		
 		return new ResponseEntity("Acesso Removido.", HttpStatus.OK);
 	}

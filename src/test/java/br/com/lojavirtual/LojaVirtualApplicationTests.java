@@ -2,16 +2,16 @@ package br.com.lojavirtual;
 
 import java.util.List;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,16 +20,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.com.lojavirtual.controller.AcessoController;
 import br.com.lojavirtual.model.Acesso;
 import br.com.lojavirtual.repository.AcessoRepository;
-import br.com.lojavirtual.service.AcessoService;
 import junit.framework.TestCase;
 
+@RunWith(SpringRunner.class)
 @SpringBootTest(classes = LojaVirtualApplication.class)
-@Profile("test")
+@AutoConfigureMockMvc
 public class LojaVirtualApplicationTests extends TestCase{
 
-	@Autowired
-	private AcessoService acessoSevice; 
-	
 	@Autowired
 	private AcessoRepository acessoRepository;
 	
@@ -39,11 +36,15 @@ public class LojaVirtualApplicationTests extends TestCase{
 	@Autowired
 	private WebApplicationContext wac;
 	
+	@Autowired
+	private MockMvc mockMvc;
+    	
+	/*Teste do end-point salvar*/
 	@Test
 	public void testRestApiCadastroACesso() throws JsonProcessingException, Exception {
 		
-		DefaultMockMvcBuilder builder = MockMvcBuilders.webAppContextSetup(this.wac);
-		MockMvc mockMvc = builder.build();
+		//DefaultMockMvcBuilder builder = MockMvcBuilders.webAppContextSetup(this.wac);
+		//MockMvc mockMvc = builder.build();
 		
 		Acesso acesso = new Acesso();
 		
@@ -56,24 +57,49 @@ public class LojaVirtualApplicationTests extends TestCase{
 						.content(objectMapper.writeValueAsString(acesso)) // conteudo
 						.accept(MediaType.APPLICATION_JSON)
 						.contentType(MediaType.APPLICATION_JSON)); 
+		
+		System.out.println("Retorno da API: " + retornoApi.andReturn().getResponse().getContentAsString());
+		
+		/*Converter o retorno da API em um objeto Acesso*/
+		
+		Acesso acessoRetorno = objectMapper.
+					        readValue(retornoApi.andReturn().getResponse().getContentAsString(), 
+							Acesso.class);
+		
+		assertEquals(acesso.getDescricao(), acessoRetorno.getDescricao());
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	/*Teste end-point deletar*/
+	@Test
+	public void testRestApiDeleteACesso() throws JsonProcessingException, Exception {
+	    // Criar um novo acesso para deletar
+	    Acesso acesso = new Acesso();
+	    acesso.setDescricao("ROLE_TESTE_DELETAR");
+
+	    // Salvar o objeto no banco
+	    acesso = acessoRepository.save(acesso);
+
+	    // Verificar se foi salvo corretamente para evitar NullPointerException
+	    assertNotNull("O acesso não foi salvo corretamente.", acesso);
+	    assertNotNull("O ID do acesso salvo está nulo.", acesso.getId());
+
+	    // Criar um objeto JSON a partir da entidade
+	    ObjectMapper objectMapper = new ObjectMapper(); // Json
+
+	    // Executar a API para deletar o acesso
+	    ResultActions retornoApi = mockMvc
+	            .perform(MockMvcRequestBuilders.post("/deleteAcesso")
+	            .content(objectMapper.writeValueAsString(acesso))
+	            .accept(MediaType.APPLICATION_JSON)
+	            .contentType(MediaType.APPLICATION_JSON));
+
+	    System.out.println("Retorno da API: " + retornoApi.andReturn().getResponse().getContentAsString());
+	    System.out.println("Status da API: " + retornoApi.andReturn().getResponse().getStatus());
+
+	    // Verificar se foi realmente deletado
+	    assertEquals("Acesso Removido.", retornoApi.andReturn().getResponse().getContentAsString());
+	    assertEquals(200, retornoApi.andReturn().getResponse().getStatus());
+	}
 	
 	
 	
