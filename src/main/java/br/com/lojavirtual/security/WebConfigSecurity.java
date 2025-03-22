@@ -5,6 +5,7 @@ import javax.servlet.http.HttpSessionListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -16,8 +17,9 @@ public class WebConfigSecurity extends WebSecurityConfigurerAdapter implements H
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers(HttpMethod.GET, "/salvarAcesso","/deleteAcesso").
-		antMatchers(HttpMethod.POST,"/salvarAcesso", "/deleteAcesso");
+		web.ignoring().antMatchers(HttpMethod.GET, "/salvarAcesso","/deleteAcesso/","/obterAcesso").
+		antMatchers(HttpMethod.POST,"/salvarAcesso", "/deleteAcesso","/obterAcesso");
 		/*ignorando URL no momento para nao autenticar*/
 	}
+	
 }
