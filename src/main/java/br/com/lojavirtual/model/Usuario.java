@@ -51,7 +51,7 @@ public class Usuario implements UserDetails{
 				foreignKey = @ForeignKey(name = "pessoa_fk", value = ConstraintMode.CONSTRAINT))
 	private Pessoa pessoa;
 	
-	@OneToMany(fetch=FetchType.LAZY) /*LAZY: carrega os acessos quando precisar*/
+	@OneToMany(fetch=FetchType.EAGER) /*LAZY: carrega os acessos quando precisar*/
 	@JoinTable(name = "usuario_acesso", 
 	 uniqueConstraints = @UniqueConstraint(columnNames = {"usuario_id","acesso_id"}, name = "unique_acesso_user"),
 	 joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id", table = "usuario", unique = false, 
