@@ -1,5 +1,6 @@
 package br.com.lojavirtual;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.junit.Test;
@@ -221,16 +222,17 @@ public class LojaVirtualApplicationTests extends TestCase{
 	
 	
 	@Test
-	public void testeCadastraAcesso() {
+	public void testeCadastraAcesso() throws ExceptionMentoriaJava {
 		Acesso acesso = new Acesso();
 		
-		acesso.setDescricao("ROLE_TEST");
+		acesso.setDescricao("ROLE_TEST " + Calendar.getInstance().getTimeInMillis());
 		//acessoRepository.save(acesso);
 		
 		assertEquals(true, acesso.getId() == null); // Certifica que o objeto ainda não foi salvo
 		
 		/*Gravou no banco de dados*/
 		acesso = acessoController.salvarAcesso(acesso).getBody();
+		
 		
 		assertEquals(true, acesso.getId() > 0);
 		
@@ -258,6 +260,7 @@ public class LojaVirtualApplicationTests extends TestCase{
 		acesso.setDescricao("ROLE_ALUNO");
 		
 		acesso = acessoController.salvarAcesso(acesso).getBody();
+		
 		
 		List<Acesso> acessos = acessoRepository.buscarAcessoDesc("ALUNO".trim().toUpperCase());
 		
