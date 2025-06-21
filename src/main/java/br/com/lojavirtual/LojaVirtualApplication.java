@@ -11,11 +11,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @EnableAsync
+@EnableScheduling
 @EntityScan(basePackages = "br.com.lojavirtual.model") // mapeia onde esta as classes do banco no projeto
 @ComponentScan(basePackages = {"br.*"})
 @EnableJpaRepositories(basePackages = {"br.com.lojavirtual.repository"})
@@ -23,15 +26,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class LojaVirtualApplication implements AsyncConfigurer{
 
 	public static void main(String[] args) {
-		
-		
-		//System.out.println(new BCryptPasswordEncoder().encode("123")); // gera um token para a senha 123
-		
+		System.out.println("Senha: " + new BCryptPasswordEncoder().encode("1234")); // gera um token para a senha 123
 		
 		SpringApplication.run(LojaVirtualApplication.class, args);
 	}
 	
-	
+
 	
 	@Bean
 	public Executor getAsyncExecutor() { 

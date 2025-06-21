@@ -24,20 +24,20 @@ import br.com.lojavirtual.model.dto.ObjetoErroDto;
 public class ControleExecoes extends ResponseEntityExceptionHandler {
 
 	
-	
+	@ExceptionHandler(ExceptionMentoriaJava.class)
 	public ResponseEntity<Object> handleExceptionCustom (ExceptionMentoriaJava ex){
 		ObjetoErroDto objetoErroDto = new ObjetoErroDto();
 		
 		objetoErroDto.setErro(ex.getMessage());
-		objetoErroDto.setCode(HttpStatus.OK.toString());
+		objetoErroDto.setCode(HttpStatus.BAD_REQUEST.toString());
 		
-		return new ResponseEntity<Object>(objetoErroDto, HttpStatus.OK);
+		return new ResponseEntity<Object>(objetoErroDto, HttpStatus.BAD_REQUEST);
 	}
 	
 	
 	
 	//Captura as excecoes do projeto
-	@ExceptionHandler({Exception.class, RuntimeException.class, Throwable.class})
+	//@ExceptionHandler({Exception.class, RuntimeException.class, Throwable.class})
 	@Override
 	protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
 			HttpStatus status, WebRequest request) {
