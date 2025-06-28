@@ -10,10 +10,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.lojavirtual.ExceptionMentoriaJava;
+import br.com.lojavirtual.model.PessoaFisica;
 import br.com.lojavirtual.model.PessoaJuridica;
 import br.com.lojavirtual.repository.PessoaRepository;
 import br.com.lojavirtual.service.PessoaUserService;
 import br.com.lojavirtual.service.ServiceSendEmail;
+import br.com.lojavirtual.util.ValidaCnpj;
+import br.com.lojavirtual.util.ValidaCpf;
 
 @RestController
 public class PessoaController {
@@ -34,6 +37,10 @@ public class PessoaController {
 		
 		if(pessoaJuridica == null) {
 			throw new ExceptionMentoriaJava("Pessoa juridica nao pode ser nulo");
+		}
+		
+		if(!ValidaCnpj.isCNPJ(pessoaJuridica.getCnpj())) {
+			throw new ExceptionMentoriaJava("CNPJ " + pessoaJuridica.getCnpj() + " é inválido.");
 		}
 		
 		if(pessoaJuridica.getId() == null && pessoaRepository.existeCnpjCadastrado(pessoaJuridica.getCnpj()) != null) {
@@ -59,4 +66,27 @@ public class PessoaController {
             return ResponseEntity.status(500).body("Erro ao enviar email: " + e.getMessage());
         }
     }
+	
+	/*End-point ou microserviço ou API*/
+	@ResponseBody
+	@PostMapping(value = "**/salvarPf")
+	public ResponseEntity<PessoaFisica> salvarPf(@RequestBody PessoaFisica pessoaFisica) throws ExceptionMentoriaJava{
+		
+		if(pessoaFisica == null) {
+			throw new ExceptionMentoriaJava("Pessoa física nao pode ser nulo");
+		}
+		
+		if(!ValidaCpf.isCPF(pessoaFisica.getCpf())) {
+			throw new ExceptionMentoriaJava("CPF " + pessoaFisica.getCpf() + " é inválido.");
+		}
+		
+		if(pessoaFisica.getId() == null && pessoaRepository.existeCpfCadastrado(pessoaFisica.getCpf()) != null) {
+			throw new ExceptionMentoriaJava("Já existe CPF cadastro com o numero: " + pessoaFisica.getCpf());
+		}
+		
+		
+		pessoaFisica = pessoaUserService.salvarPessoaFisica(pessoaFisica);
+		
+		return new ResponseEntity<PessoaFisica>(pessoaFisica,HttpStatus.OK);
+	}
 }
