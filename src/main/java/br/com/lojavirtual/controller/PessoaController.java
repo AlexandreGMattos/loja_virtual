@@ -1,5 +1,7 @@
 package br.com.lojavirtual.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +35,9 @@ public class PessoaController {
 	/*End-point ou microserviço ou API*/
 	@ResponseBody
 	@PostMapping(value = "**/salvarPj")
-	public ResponseEntity<PessoaJuridica> salvarPj(@RequestBody PessoaJuridica pessoaJuridica) throws ExceptionMentoriaJava{
+	public ResponseEntity<PessoaJuridica> salvarPj(@RequestBody  @Valid PessoaJuridica pessoaJuridica) throws ExceptionMentoriaJava{ //@RequestBody recebe um json
+		
+		
 		
 		if(pessoaJuridica == null) {
 			throw new ExceptionMentoriaJava("Pessoa juridica nao pode ser nulo");
@@ -70,7 +74,7 @@ public class PessoaController {
 	/*End-point ou microserviço ou API*/
 	@ResponseBody
 	@PostMapping(value = "**/salvarPf")
-	public ResponseEntity<PessoaFisica> salvarPf(@RequestBody PessoaFisica pessoaFisica) throws ExceptionMentoriaJava{
+	public ResponseEntity<PessoaFisica> salvarPf(@RequestBody @Valid PessoaFisica pessoaFisica) throws ExceptionMentoriaJava{
 		
 		if(pessoaFisica == null) {
 			throw new ExceptionMentoriaJava("Pessoa física nao pode ser nulo");
