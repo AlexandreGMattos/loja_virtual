@@ -6,14 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.lojavirtual.ExceptionMentoriaJava;
+import br.com.lojavirtual.model.Endereco;
 import br.com.lojavirtual.model.PessoaFisica;
 import br.com.lojavirtual.model.PessoaJuridica;
+import br.com.lojavirtual.model.dto.CepDTO;
+import br.com.lojavirtual.repository.EnderecoRepository;
 import br.com.lojavirtual.repository.PessoaRepository;
 import br.com.lojavirtual.service.PessoaUserService;
 import br.com.lojavirtual.service.ServiceSendEmail;
@@ -31,6 +35,19 @@ public class PessoaController {
 	
 	@Autowired
 	private ServiceSendEmail serviceSendEmail;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
+	
+	@ResponseBody
+	@GetMapping(value = "**/consultaCep/{cep}") // passando uma variavel {cep}
+	public ResponseEntity<CepDTO> consultaCep(@PathVariable("cep") String cep){
+		
+		CepDTO cepDTO = pessoaUserService.consultaCep(cep);
+		
+		return new ResponseEntity<CepDTO>(cepDTO, HttpStatus.OK);
+		
+	}
 	
 	/*End-point ou microserviço ou API*/
 	@ResponseBody
@@ -53,6 +70,33 @@ public class PessoaController {
 		
 		if(pessoaJuridica.getId() == null && pessoaRepository.existeInscEstadualCadastrado(pessoaJuridica.getInscEstadual()) != null) {
 			throw new ExceptionMentoriaJava("Já existe Inscrição Estadual cadastro com o numero: " + pessoaJuridica.getInscEstadual());
+		}
+		
+		if(pessoaJuridica.getId() == null || pessoaJuridica.getId() <= 0) {
+			
+			for (int i = 0; i < pessoaJuridica.getEnderecos().size(); i++) {
+				CepDTO cepDTO = pessoaUserService.consultaCep(pessoaJuridica.getEnderecos().get(i).getCep());
+				
+				pessoaJuridica.getEnderecos().get(i).setBairro(cepDTO.getBairro());
+				pessoaJuridica.getEnderecos().get(i).setCidade(cepDTO.getLocalidade());
+				pessoaJuridica.getEnderecos().get(i).setComplemento(cepDTO.getComplemento());
+				pessoaJuridica.getEnderecos().get(i).setRuaLogra(cepDTO.getLogradouro());
+				pessoaJuridica.getEnderecos().get(i).setUf(cepDTO.getUf());
+			}
+		}else {
+			for (int i = 0; i < pessoaJuridica.getEnderecos().size(); i++) {
+				Endereco enderecoTemp = enderecoRepository.findById(pessoaJuridica.getEnderecos().get(i).getId()).get();// busca id no banco
+				
+				if(!enderecoTemp.getCep().equals(pessoaJuridica.getEnderecos().get(i).getCep())) {
+					CepDTO cepDTO = pessoaUserService.consultaCep(pessoaJuridica.getEnderecos().get(i).getCep());
+					
+					pessoaJuridica.getEnderecos().get(i).setBairro(cepDTO.getBairro());
+					pessoaJuridica.getEnderecos().get(i).setCidade(cepDTO.getLocalidade());
+					pessoaJuridica.getEnderecos().get(i).setComplemento(cepDTO.getComplemento());
+					pessoaJuridica.getEnderecos().get(i).setRuaLogra(cepDTO.getLogradouro());
+					pessoaJuridica.getEnderecos().get(i).setUf(cepDTO.getUf());
+				}
+			}
 		}
 		
 		pessoaJuridica = pessoaUserService.salvarPessoaJuridica(pessoaJuridica);
