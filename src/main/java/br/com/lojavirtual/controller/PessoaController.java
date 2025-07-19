@@ -1,5 +1,7 @@
 package br.com.lojavirtual.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +14,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import br.com.lojavirtual.ExceptionMentoriaJava;
 import br.com.lojavirtual.model.Endereco;
 import br.com.lojavirtual.model.PessoaFisica;
 import br.com.lojavirtual.model.PessoaJuridica;
 import br.com.lojavirtual.model.dto.CepDTO;
 import br.com.lojavirtual.repository.EnderecoRepository;
+import br.com.lojavirtual.repository.PessoaFisicaRepository;
 import br.com.lojavirtual.repository.PessoaRepository;
 import br.com.lojavirtual.service.PessoaUserService;
 import br.com.lojavirtual.service.ServiceSendEmail;
@@ -38,6 +42,49 @@ public class PessoaController {
 	
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	
+	@Autowired
+	private PessoaFisicaRepository  pessoaFisicaRepository;
+	
+	@ResponseBody
+	@GetMapping(value = "**/consultaPFNome/{nome}")
+	public ResponseEntity<List<PessoaFisica>> consultaPFNome(@PathVariable("nome") String nome){
+		
+		List<PessoaFisica> lista = pessoaFisicaRepository.pesquisaPorNomePF(nome.trim().toUpperCase());
+		
+		return new ResponseEntity<List<PessoaFisica>>(lista, HttpStatus.OK);
+		
+	}
+	
+	@ResponseBody
+	@GetMapping(value = "**/consultaPFcpf/{cpf}")
+	public ResponseEntity<List<PessoaFisica>> consultaPFcpf(@PathVariable("cpf") String cpf){
+		
+		List<PessoaFisica> lista = pessoaFisicaRepository.existeCpfCadastradoList(cpf);
+		
+		return new ResponseEntity<List<PessoaFisica>>(lista, HttpStatus.OK);
+		
+	}
+	
+	@ResponseBody
+	@GetMapping(value = "**/consultaNomePJ/{nome}")
+	public ResponseEntity<List<PessoaJuridica>> consultaNomePJ(@PathVariable("nome") String nome){
+		
+		List<PessoaJuridica> lista = pessoaRepository.pesquisaPorNomePJ(nome.trim().toUpperCase());
+		
+		return new ResponseEntity<List<PessoaJuridica>>(lista, HttpStatus.OK);
+		
+	}
+	
+	@ResponseBody
+	@GetMapping(value = "**/consultaCnpjPJ/{cnpj}")
+	public ResponseEntity<List<PessoaJuridica>> consultaCnpjPJ(@PathVariable("cnpj") String cnpj){
+		
+		List<PessoaJuridica> lista = pessoaRepository.existeCnpjCadastradoList(cnpj);
+		
+		return new ResponseEntity<List<PessoaJuridica>>(lista, HttpStatus.OK);
+		
+	}
 	
 	@ResponseBody
 	@GetMapping(value = "**/consultaCep/{cep}") // passando uma variavel {cep}
