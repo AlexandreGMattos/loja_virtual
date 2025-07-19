@@ -60,7 +60,7 @@ public class PessoaController {
 	@GetMapping(value = "**/consultaPFcpf/{cpf}")
 	public ResponseEntity<List<PessoaFisica>> consultaPFcpf(@PathVariable("cpf") String cpf){
 		
-		List<PessoaFisica> lista = pessoaFisicaRepository.existeCpfCadastradoList(cpf);
+		List<PessoaFisica> lista = pessoaFisicaRepository.existeCpfCadastradoList(cpf);   
 		
 		return new ResponseEntity<List<PessoaFisica>>(lista, HttpStatus.OK);
 		
