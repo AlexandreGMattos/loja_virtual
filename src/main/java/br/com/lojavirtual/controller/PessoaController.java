@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import br.com.lojavirtual.ExceptionMentoriaJava;
+import br.com.lojavirtual.enums.TipoPessoa;
 import br.com.lojavirtual.model.Endereco;
 import br.com.lojavirtual.model.PessoaFisica;
 import br.com.lojavirtual.model.PessoaJuridica;
 import br.com.lojavirtual.model.dto.CepDTO;
+import br.com.lojavirtual.model.dto.ConsultaCnpjDTO;
 import br.com.lojavirtual.repository.EnderecoRepository;
 import br.com.lojavirtual.repository.PessoaFisicaRepository;
 import br.com.lojavirtual.repository.PessoaRepository;
@@ -96,6 +98,13 @@ public class PessoaController {
 		
 	}
 	
+	@ResponseBody
+	@GetMapping(value = "**/consultaCnpjReceitaWs/{cnpj}") // passando uma variavel {cnpj}
+	public ResponseEntity<ConsultaCnpjDTO> consultaCnpjReceitaWs(@PathVariable("cnpj") String cnpj){
+		
+		return new ResponseEntity<ConsultaCnpjDTO>(pessoaUserService.consultaCnpjReceitaWS(cnpj), HttpStatus.OK);		
+	}
+	
 	/*End-point ou microserviço ou API*/
 	@ResponseBody
 	@PostMapping(value = "**/salvarPj")
@@ -105,6 +114,10 @@ public class PessoaController {
 		
 		if(pessoaJuridica == null) {
 			throw new ExceptionMentoriaJava("Pessoa juridica nao pode ser nulo");
+		}
+		
+		if(pessoaJuridica.getTipoPessoa() == null) {
+			throw new ExceptionMentoriaJava("Informe o tipo Jurídico ou Fornecedor da LOJA.");
 		}
 		
 		if(!ValidaCnpj.isCNPJ(pessoaJuridica.getCnpj())) {
@@ -169,6 +182,10 @@ public class PessoaController {
 		
 		if(pessoaFisica == null) {
 			throw new ExceptionMentoriaJava("Pessoa física nao pode ser nulo");
+		}
+		
+		if(pessoaFisica.getTipoPessoa() == null) {
+			pessoaFisica.setTipoPessoa(TipoPessoa.FISICA.name());
 		}
 		
 		if(!ValidaCpf.isCPF(pessoaFisica.getCpf())) {
