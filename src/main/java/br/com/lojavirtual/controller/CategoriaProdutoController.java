@@ -46,6 +46,10 @@ public class CategoriaProdutoController {
 	@PostMapping(value = "**/deleteCategoria")
 	public ResponseEntity<?> deleteCategoria(@RequestBody CategoriaProduto categoriaProduto){
 		
+		if(categoriaProdutoRepository.findById(categoriaProduto.getId()).isPresent() == false) {
+			return new ResponseEntity("Categoria já foi removida.", HttpStatus.OK);
+		}
+		
 		categoriaProdutoRepository.deleteById(categoriaProduto.getId());
 		
 		return new ResponseEntity("Categoria Removida", HttpStatus.OK);
